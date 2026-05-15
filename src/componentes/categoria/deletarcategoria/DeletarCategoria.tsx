@@ -1,13 +1,13 @@
 import { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { AuthContext } from "../../../contexts/AuthContext";
-import type Tema from "../../../models/Tema";
+import type Categoria from "../../../models/Categoria";
 import { buscar, deletar } from "../../../service/Service";
 import { ClipLoader } from "react-spinners";
 
-function DeletarTema() {
+function DeletarCategoria() {
     const navigate = useNavigate();
-    const [tema, setTema] = useState<Tema>({} as Tema);
+    const [categoria, setCategoria] = useState<Categoria>({} as Categoria);
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const { usuario, handleLogout } = useContext(AuthContext);
@@ -16,7 +16,7 @@ function DeletarTema() {
 
     async function buscarPorId(id: string) {
         try {
-            await buscar(`/temas/${id}`, setTema, {
+            await buscar(`/temas/${id}`, setCategoria, {
                 headers: { Authorization: token }
             });
         } catch (error: unknown) {
@@ -40,21 +40,21 @@ function DeletarTema() {
     }, [id]);
 
     function retornar() {
-        navigate("/temas");
+        navigate("/categorias");
     }
 
-    async function deletarTema() {
+    async function deletarCategoria() {
         setIsLoading(true);
         try {
-            await deletar(`/temas/${id}`, {
+            await deletar(`/categorias/${id}`, {
                 headers: { Authorization: token }
             });
-            alert('Tema apagado com sucesso!');
+            alert('Categoria apagado com sucesso!');
         } catch (error: unknown) {
             if (error instanceof Error && error.toString().includes('401')) {
                 handleLogout();
             } else {
-                alert('Erro ao apagar o tema.');
+                alert('Erro ao apagar o Categoria.');
             }
         }
         setIsLoading(false);
@@ -63,9 +63,9 @@ function DeletarTema() {
 
     return (
         <div className="container w-1/3 mx-auto">
-            <h1 className="text-4xl text-center my-4">Deletar Tema</h1>
+            <h1 className="text-4xl text-center my-4">Deletar Categoria</h1>
             <p className="text-center font-semibold mb-4">
-                Você tem certeza de que deseja apagar o tema a seguir?
+                Você tem certeza de que deseja apagar o Categoria a seguir?
             </p>
             
             <div className="border flex flex-col rounded-2xl overflow-hidden justify-between shadow-xl">
@@ -74,7 +74,7 @@ function DeletarTema() {
                 </header>
                 <div className="p-8 bg-slate-100">
                     <p className="text-slate-500 uppercase text-xs font-bold mb-2">Descrição:</p>
-                    <p className="text-3xl text-slate-800">{tema.descricao}</p>
+                    <p className="text-3xl text-slate-800">{categoria.descricao}</p>
                 </div>
                 
                 <div className="flex">
@@ -86,7 +86,7 @@ function DeletarTema() {
                     </button>
                     <button
                         className="w-full text-white bg-purple-500 hover:bg-purple-900 flex items-center justify-center font-bold transition-all border-l border-purple-700"
-                        onClick={deletarTema}
+                        onClick={deletarCategoria}
                         disabled={isLoading}
                     >
                         {isLoading ? (
@@ -101,4 +101,4 @@ function DeletarTema() {
     );
 }
 
-export default DeletarTema;
+export default DeletarCategoria;

@@ -15,9 +15,8 @@ function Navbar() {
 
     let component: ReactNode;
 
-
-    //if (usuario.token !== "") {
-        // eslint-disable-next-line prefer-const
+    if (usuario.token !== "") {
+        
         component = (
             <div className='w-full flex justify-center py-4 bg-purple-900 text-white'>
                 <div className="container flex justify-between text-lg mx-8">
@@ -37,7 +36,7 @@ function Navbar() {
                 </div>
             </div>
         );
-   // }
+}
 
     return (
         <>
