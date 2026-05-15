@@ -1,11 +1,11 @@
 import { Link } from 'react-router-dom'
-import type Postagem from '../../../models/Postagem'
+import type Produto from '../../../models/Produto'
 
-interface CardPostagensProps {
-    postagem: Postagem
+interface CardProdutosProps {
+    produto: Produto
 }
 
-function CardPostagem({ postagem }: CardPostagensProps) {
+function CardProduto({ produto }: CardProdutosProps) {
     return (
         <div className='border-slate-900 border 
             flex flex-col rounded overflow-hidden justify-between'>
@@ -13,30 +13,30 @@ function CardPostagem({ postagem }: CardPostagensProps) {
             <div>
                 <div className="flex w-full bg-indigo-400 py-2 px-4 items-center gap-4">
                     <img
-                        src={postagem.usuario?.foto}
+                        src={produto.usuario?.foto}
                         className='h-12 rounded-full'
-                        alt={postagem.usuario?.nome} />
+                        alt={produto.usuario?.nome} />
                     <h3 className='text-lg font-bold text-center uppercase'>
-                        {postagem.usuario?.nome}
+                        {produto.usuario?.nome}
                     </h3>
                 </div>
                 <div className='p-4 '>
-                    <h4 className='text-lg font-semibold uppercase'>{postagem.titulo}</h4>
-                    <p>{postagem.texto}</p>
-                    <p>Tema: {postagem.tema?.descricao}</p>
+                    <h4 className='text-lg font-semibold uppercase'>{produto.titulo}</h4>
+                    <p>{produto.texto}</p>
+                    <p>Tema: {produto.categoria?.descricao}</p>
                     <p>Data: {new Intl.DateTimeFormat("pt-BR", {
                         dateStyle: 'full',
                         timeStyle: 'medium',
-                    }).format(new Date(postagem.data))}</p>
+                    }).format(new Date(produto.data))}</p>
                 </div>
             </div>
             <div className="flex">
-                <Link to={`/editarpostagem/${postagem.id}`} 
+                <Link to={`/editarpostagem/${produto.id}`} 
                     className='w-full text-white bg-indigo-400 
                     hover:bg-indigo-800 flex items-center justify-center py-2'>
                     <button>Editar</button>
                 </Link>
-                <Link to={`/deletarpostagem/${postagem.id}`}
+                <Link to={`/deletarpostagem/${produto.id}`}
                     className='text-white bg-red-400 
                     hover:bg-red-700 w-full flex items-center justify-center'>
                     <button>Deletar</button>
@@ -46,4 +46,4 @@ function CardPostagem({ postagem }: CardPostagensProps) {
     )
 }
 
-export default CardPostagem
+export default CardProduto

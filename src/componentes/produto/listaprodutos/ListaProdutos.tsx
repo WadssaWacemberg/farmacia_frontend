@@ -3,17 +3,17 @@ import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { SyncLoader } from "react-spinners";
 import { AuthContext } from "../../../contexts/AuthContext";
-import type Postagem from "../../../models/Postagem";
+import type Produto from "../../../models/Produto";
 import { buscar } from "../../../service/Service";
-import CardPostagem from "../cardproduto/CardProdutos";
+import CardProduto from "../cardproduto/CardProdutos";
 
-function ListaPostagens() {
+function ListaProdutos() {
 
     const navigate = useNavigate();
 
     const [isLoading, setIsLoading] = useState<boolean>(false)
 
-    const [postagens, setPostagens] = useState<Postagem[]>([])
+    const [produtos, setProdutos] = useState<Produto[]>([])
 
     const { usuario, handleLogout } = useContext(AuthContext)
     const token = usuario.token
@@ -26,15 +26,15 @@ function ListaPostagens() {
     }, [token])
 
     useEffect(() => {
-        buscarPostagens()    
-    }, [postagens.length])
+        buscarProdutos()    
+    }, [produtos.length])
 
-    async function buscarPostagens() {
+    async function buscarProdutos() {
         try {
 
             setIsLoading(true)
 
-            await buscar('/postagens', setPostagens, {
+            await buscar('/produtos', setProdutos, {
                 headers: { Authorization: token }
             })
         } catch (err) {
@@ -62,17 +62,17 @@ function ListaPostagens() {
             <div className="flex justify-center w-full my-4">
                 <div className="container flex flex-col">
 
-                    {(!isLoading && postagens.length === 0) && (
+                    {(!isLoading && produtos.length === 0) && (
                             <span className="text-3xl text-center my-8">
-                                Nenhuma Postagem foi encontrada!
+                                Nenhuma Produto foi encontrada!
                             </span>
                     )}
 
                     <div className="grid grid-cols-1 md:grid-cols-2 
                                     lg:grid-cols-3 gap-8">
                             {
-                                postagens.map((postagem) => (
-                                    <CardPostagem key={postagem.id} postagem={postagem}/>
+                                produtos.map((produto) => (
+                                    <CardProduto key={produto.id} produto={produto}/>
                                 ))
                             }
                     </div>
@@ -81,4 +81,4 @@ function ListaPostagens() {
         </>
     )
 }
-export default ListaPostagens;
+export default ListaProdutos;

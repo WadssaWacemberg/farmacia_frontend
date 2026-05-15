@@ -1,4 +1,4 @@
-import type Postagem from "./Postagem";
+import type Produto from "./Produto";
 
 export default interface Usuario{
     id: number;
@@ -6,5 +6,5 @@ export default interface Usuario{
     usuario: string;
     foto: string;
     senha: string;
-    postagem?: Postagem[] | null;
+    produto?: Produto[] | null;
 }

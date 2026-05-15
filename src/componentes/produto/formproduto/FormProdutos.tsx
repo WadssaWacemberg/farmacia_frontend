@@ -1,35 +1,35 @@
 import { type ChangeEvent, useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { AuthContext } from "../../../contexts/AuthContext";
-import  type Tema from "../../../models/Tema";
-import type Postagem from "../../../models/Postagem";
+import type Categoria from "../../../models/Categoria";
+import type Produto from "../../../models/Produto";
 import { buscar, atualizar, cadastrar } from "../../../service/Service";
 
-function FormPostagem() {
+function FormProduto() {
     const navigate = useNavigate();
     const { id } = useParams<{ id: string }>();
     const { usuario, handleLogout } = useContext(AuthContext);
     const token = usuario.token;
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [temas, setTemas] = useState<Tema[]>([]);
-    const [tema, setTema] = useState<Tema>({ id: 0, descricao: '' });
-    const [postagem, setPostagem] = useState<Postagem>({} as Postagem);
+    const [categorias, setCategorias] = useState<Categoria[]>([]); 
+    const [categoria, setCategoria] = useState<Categoria>({ id: 0, descricao: '' });
+    const [produto, setProduto] = useState<Produto>({} as Produto);
 
-    async function buscarPostagemPorId(id: string) {
-        await buscar(`/postagens/${id}`, setPostagem, {
+    async function buscarProdutoPorId(id: string) {
+        await buscar(`/produtos/${id}`, setProduto, {
             headers: { Authorization: token }
         });
     }
 
-    async function buscarTemaPorId(id: string) {
-        await buscar(`/temas/${id}`, setTema, {
+    async function buscarCategoriaPorId(id: string) {
+        await buscar(`/categorias/${id}`, setCategoria, {
             headers: { Authorization: token }
         });
     }
 
-    async function buscarTemas() {
-        await buscar('/temas', setTemas, {
+    async function listarCategorias() {
+        await buscar('/categorias', setCategorias, {
             headers: { Authorization: token }
         });
     }
@@ -42,65 +42,65 @@ function FormPostagem() {
     }, [token]);
 
     useEffect(() => {
-        buscarTemas();
+        listarCategorias();
         if (id !== undefined) {
-            buscarPostagemPorId(id);
+            buscarProdutoPorId(id);
         }
     }, [id]);
 
     useEffect(() => {
         // eslint-disable-next-line react-hooks/set-state-in-effect
-        setPostagem({
-            ...postagem,
-            tema: tema,
+        setProduto({
+            ...produto,
+            categoria: categoria,
         });
-    }, [tema]);
+    }, [categoria]);
 
     function atualizarEstado(e: ChangeEvent<HTMLInputElement>) {
-        setPostagem({
-            ...postagem,
+        setProduto({
+            ...produto,
             [e.target.name]: e.target.value,
-            tema: tema,
+            categoria: categoria,
             usuario: usuario,
         });
     }
 
     function retornar() {
-        navigate('/postagens');
+        navigate('/produtos');
     }
 
-    async function gerarNovaPostagem(e: ChangeEvent<HTMLFormElement>) {
+    async function gerarNovoProduto(e: ChangeEvent<HTMLFormElement>) {
         e.preventDefault();
         setIsLoading(true);
 
         if (id !== undefined) {
             try {
-                await atualizar(`/postagens`, postagem, setPostagem, {
+                await atualizar(`/produtos`, produto, setProduto, {
                     headers: { Authorization: token },
                 });
-                alert('Postagem atualizada com sucesso');
+                alert('Produto atualizado com sucesso');
                 retornar();
             } catch (err) {
                 const errorMessage = String(err);
                 if (errorMessage.includes('401')) {
                     handleLogout();
                 } else {
-                    alert('Erro ao atualizar a Postagem');
+                    alert('Erro ao atualizar o Produto');
                 }
             }
         } else {
             try {
-                await cadastrar(`/postagens`, postagem, setPostagem, {
+                await cadastrar(`/produtos`, produto, setProduto, {
                     headers: { Authorization: token },
                 });
-                alert('Postagem cadastrada com sucesso');
+                alert('Produto cadastrado com sucesso');
                 retornar();
-            }catch (err) {
+            } catch (err) {
                 const errorMessage = String(err);
                 if (errorMessage.includes('401')) {
                     handleLogout();
                 } else {
-                    alert('Erro ao cadastrar a Postagem');
+                    alert('Erro ao cadastrar o Produto');
                 }
             }
         }
@@ -110,54 +110,57 @@ function FormPostagem() {
     return (
         <div className="container flex flex-col mx-auto items-center">
             <h1 className="text-4xl text-center my-8">
-                {id !== undefined ? 'Editar Postagem' : 'Cadastrar Postagem'}
+                {id !== undefined ? 'Editar Produto' : 'Cadastrar Produto'}
             </h1>
 
-            <form onSubmit={gerarNovaPostagem} className="flex flex-col w-1/2 gap-4">
+            <form onSubmit={gerarNovoProduto} className="flex flex-col w-1/2 gap-4">
                 <div className="flex flex-col gap-2">
-                    <label htmlFor="titulo">Título da Postagem</label>
+                    <label htmlFor="nome">Nome do Produto</label>
                     <input
-                        value={postagem.titulo || ''}
+                        value={produto.nome || ''}
                         onChange={(e: ChangeEvent<HTMLInputElement>) => atualizarEstado(e)}
                         type="text"
-                        placeholder="Titulo"
-                        name="titulo"
+                        placeholder="Ex: Amoxicilina"
+                        name="nome"
                         required
                         className="border-2 border-slate-700 rounded p-2"
                     />
                 </div>
                 <div className="flex flex-col gap-2">
-                    <label htmlFor="texto">Texto da Postagem</label>
+                    <label htmlFor="descricao">Descrição</label>
                     <input
-                        value={postagem.texto || ''}
+                        value={produto.descricao || ''}
                         onChange={(e: ChangeEvent<HTMLInputElement>) => atualizarEstado(e)}
                         type="text"
-                        placeholder="Texto"
-                        name="texto"
+                        placeholder="Descrição do produto"
+                        name="descricao"
                         required
                         className="border-2 border-slate-700 rounded p-2"
                     />
                 </div>
                 <div className="flex flex-col gap-2">
-                    <p>Tema da Postagem</p>
-                    <select name="tema" id="tema" className="border p-2 border-slate-800 rounded"
-                        onChange={(e) => buscarTemaPorId(e.currentTarget.value)}>
-                        <option value="" selected disabled>Selecione um Tema</option>
-                        {temas.map((tema) => (
-                            <option key={tema.id} value={tema.id}>{tema.descricao}</option>
+                    <p>Categoria do Produto</p>
+                    <select 
+                        name="categoria" 
+                        id="categoria" 
+                        className="border p-2 border-slate-800 rounded"
+                        onChange={(e) => buscarCategoriaPorId(e.currentTarget.value)}
+                    >
+                        <option value="" selected disabled>Selecione uma Categoria</option>
+                        {categorias.map((item) => (
+                            <option key={item.id} value={item.id}>{item.descricao}</option>
                         ))}
                     </select>
                 </div>
                 <button
                     type="submit"
-                    disabled={isLoading || tema.id === 0}
-                    className='rounded disabled:bg-slate-200 bg-purple-400 hover:bg-purple-800 text-white font-bold w-full mx-auto py-2 flex justify-center'
+                    disabled={isLoading || categoria.id === 0}
+                    className='rounded disabled:bg-slate-200 bg-purple-600 hover:bg-purple-800 text-white font-bold w-full mx-auto py-2 flex justify-center'
                 >
-                    {isLoading ? <span>Carregando</span> : id !== undefined ? 'Editar' : 'Cadastrar'}
+                    {isLoading ? <span>Carregando...</span> : id !== undefined ? 'Atualizar' : 'Cadastrar'}
                 </button>
-            </form>
+            </form> 
         </div>
     );
 }
-
-export default FormPostagem;
+export default FormProduto;
